@@ -29,18 +29,26 @@ module ThumbsUp #:nodoc:
 
     module InstanceMethods
       def karma(options = {})
-        self.class.base_class.karmic_objects.collect do |object, attr|
-          v = object.where(["#{self.class.base_class.table_name}.#{self.class.base_class.primary_key} = ?", self.id])
-          v = v.joins("INNER JOIN #{Vote.table_name} ON #{Vote.table_name}.voteable_type = '#{object.to_s}' AND #{Vote.table_name}.voteable_id = #{object.table_name}.#{object.primary_key}")
-          v = v.joins("INNER JOIN #{self.class.base_class.table_name} ON #{self.class.base_class.table_name}.#{self.class.base_class.primary_key} = #{object.table_name}.#{attr[0]}")
-          upvotes = v.where(["#{Vote.table_name}.vote = ?", true])
-          downvotes = v.where(["#{Vote.table_name}.vote = ?", false])
-          if attr[1].length == 1 # Only count upvotes, not downvotes.
-            (upvotes.count.to_f * attr[1].first).round
+        self.class.base_class.karmic_objects.collect do |object, params|
+
+          upvotes, downvotes = build_karma_query(object, params)
+
+          if params[1].length == 1 # Only count upvotes, not downvotes.
+            (upvotes.count.to_f * params[1].first).round
           else
-            (upvotes.count.to_f * attr[1].first - downvotes.count.to_f * attr[1].last).round
+            (upvotes.count.to_f * params[1].first - downvotes.count.to_f * params[1].last).round
           end
         end.sum
+      end
+
+      private
+
+      def build_karma_query(o, p)
+        v = o.joins(Vote.table_name).on(Vote.arel_table[:voteable_type].eq(o.to_s).and(Vote.arel_table[:voteable_id].eq(o.arel_table[o.primary_key])))
+        v = v.joins(self.class.base_class.table_name).on(self.base_class.arel_table[self.class.base_class.primary_key].eq(o.arel_table[p[0]]))
+        v = v.where(self.class.base_class.areal_table[self.class.base_class.primary_key].eq(self.id))
+        puts v.to_sql
+        [ v.where(vote_table[:vote].eq(true)), v.where(vote_table[:vote].eq(false)) ]
       end
     end
 
