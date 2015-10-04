@@ -44,11 +44,16 @@ module ThumbsUp #:nodoc:
       private
 
       def build_karma_query(o, p)
-        v = o.joins(Vote.table_name).on(Vote.arel_table[:voteable_type].eq(o.to_s).and(Vote.arel_table[:voteable_id].eq(o.arel_table[o.primary_key])))
-        v = v.joins(self.class.base_class.table_name).on(self.base_class.arel_table[self.class.base_class.primary_key].eq(o.arel_table[p[0]]))
-        v = v.where(self.class.base_class.areal_table[self.class.base_class.primary_key].eq(self.id))
-        puts v.to_sql
-        [ v.where(vote_table[:vote].eq(true)), v.where(vote_table[:vote].eq(false)) ]
+        # v = o.joins(Vote.table_name).on(Vote.arel_table[:voteable_type].eq(o.to_s).and(Vote.arel_table[:voteable_id].eq(o.arel_table[o.primary_key])))
+        # v = v.join(self.class.base_class.table_name).on(self.class.base_class.arel_table[self.class.base_class.primary_key].eq(o.arel_table[p[0]]))
+        # v = v.where(self.class.base_class.arel_table[self.class.base_class.primary_key].eq(self.id))
+        # puts v.to_sql
+        v = o
+            .joins(Vote.table_name, self.class.base_class.table_name)
+            .where(Vote.arel_table[:voteable_type].eq(o.to_s).and(Vote.arel_table[:voteable_id].eq(o.arel_table[o.primary_key])))
+            .where(self.class.base_class.arel_table[self.class.base_class.primary_key].eq(o.arel_table[p[0]]))
+            .where(self.class.base_class.arel_table[self.class.base_class.primary_key].eq(self.id))
+        [ v.where(Vote.arel_table[:vote].eq(true)), v.where(Vote.arel_table[:vote].eq(false)) ]
       end
     end
 
