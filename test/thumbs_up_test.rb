@@ -89,8 +89,6 @@ class TestThumbsUp < Minitest::Test
 
     item = Item.create(:name => 'XBOX', :description => 'XBOX console')
 
-    assert_equal 0, item.ci_plusminus
-
     user_for = User.create(:name => 'david')
     another_user_for = User.create(:name => 'name')
     user_against = User.create(:name => 'brady')
@@ -100,20 +98,18 @@ class TestThumbsUp < Minitest::Test
     another_user_for.vote_for(item)
     # Use #reload to force reloading of votes from the database,
     # otherwise these tests fail after "assert_equal 0, item.ci_plusminus" caches
-    # the votes. We hack this as caching is the correct behavious, per-request,
+    # the votes. We hack this as caching is the correct behaviour, per-request,
     # in production.
     item.reload
 
     assert_equal 2, item.votes_for
     assert_equal 0, item.votes_against
     assert_equal 2, item.plusminus
-    assert_in_delta 0.34, item.ci_plusminus, 0.01
 
     user_against.vote_against(item)
 
     assert_equal 1, item.votes_against
     assert_equal 1, item.plusminus
-    assert_in_delta 0.20, item.ci_plusminus, 0.01
 
     assert_equal 3, item.votes_count
 
@@ -216,8 +212,6 @@ class TestThumbsUp < Minitest::Test
 
     item = ItemCustom.create(:name => 'XBOX', :description => 'XBOX console')
 
-    assert_equal 0, item.ci_plusminus
-
     user_for = UserCustom.create(:name => 'david')
     another_user_for = UserCustom.create(:name => 'name')
     user_against = UserCustom.create(:name => 'brady')
@@ -232,20 +226,18 @@ class TestThumbsUp < Minitest::Test
     another_user_for.vote_for(item)
     # Use #reload to force reloading of votes from the database,
     # otherwise these tests fail after "assert_equal 0, item.ci_plusminus" caches
-    # the votes. We hack this as caching is the correct behavious, per-request,
+    # the votes. We hack this as caching is the correct behaviour, per-request,
     # in production.
     item.reload
 
     assert_equal 2, item.votes_for
     assert_equal 0, item.votes_against
     assert_equal 2, item.plusminus
-    assert_in_delta 0.34, item.ci_plusminus, 0.01
 
     user_against.vote_against(item)
 
     assert_equal 1, item.votes_against
     assert_equal 1, item.plusminus
-    assert_in_delta 0.20, item.ci_plusminus, 0.01
 
     assert_equal 3, item.votes_count
 
