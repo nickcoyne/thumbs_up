@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.files = Dir.glob('{lib,rails,test}/**/*') + %w(CHANGELOG.md Gemfile LICENSE README.md Rakefile)
   s.require_paths = ['lib']
 
-  s.add_runtime_dependency('activerecord', '> 4.2', '< 7')
+  s.add_runtime_dependency('activerecord', '> 4.2', '< 8')
   s.add_runtime_dependency('statistics2')
   s.add_development_dependency('minitest')
   s.add_development_dependency('simplecov')
