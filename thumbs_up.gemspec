@@ -18,7 +18,6 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   s.add_runtime_dependency('activerecord', '> 4.2', '< 8')
-  s.add_runtime_dependency('statistics2')
   s.add_development_dependency('minitest')
   s.add_development_dependency('simplecov')
   s.add_development_dependency('bundler')
